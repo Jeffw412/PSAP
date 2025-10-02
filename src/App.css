@@ -1,0 +1,175 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.App-header-content {
+  text-align: center;
+  max-width: calc(100% - 200px); /* Leave space for controls */
+}
+
+.logo {
+  height: 40px;
+  max-width: 200px;
+  margin-bottom: 0.75rem;
+  object-fit: contain;
+}
+
+.App-header-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.App-header h1 {
+  color: var(--color-primary, #2c5aa0);
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.App-header p {
+  color: var(--color-text-secondary, #666);
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.subtitle {
+  color: var(--color-text-muted, #888);
+  font-size: 1rem !important;
+  font-style: italic;
+}
+
+.logout-button {
+  background-color: var(--color-danger, #dc2626);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: var(--color-danger-hover, #b91c1c);
+}
+
+.App-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #c33;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --color-primary: #2c5aa0;
+  --color-text-secondary: #666;
+  --color-text-muted: #888;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-primary: #60a5fa;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-danger: #f87171;
+  --color-danger-hover: #ef4444;
+}
+
+/* Tactical theme - olive green and tan colors */
+[data-theme="tactical"] {
+  --color-primary: #8b7355; /* tan */
+  --color-text-secondary: #a3a380; /* muted olive */
+  --color-text-muted: #8b8b6b; /* darker muted olive */
+  --color-danger: #cd853f; /* sandy brown */
+  --color-danger-hover: #a0522d; /* sienna */
+  background-color: #3c3c2a; /* dark olive background */
+  color: #e6e6d4; /* light tan text */
+}
+
+/* System theme fallback */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --color-primary: #2c5aa0;
+    --color-text-secondary: #666;
+    --color-text-muted: #888;
+    --color-danger: #dc2626;
+    --color-danger-hover: #b91c1c;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-primary: #60a5fa;
+    --color-text-secondary: #cbd5e1;
+    --color-text-muted: #94a3b8;
+    --color-danger: #f87171;
+    --color-danger-hover: #ef4444;
+  }
+}
+
+@media (max-width: 768px) {
+  .App {
+    padding: 1rem; /* Reduce padding on mobile */
+  }
+
+  .App-header-content {
+    max-width: 100%;
+  }
+
+  .App-header-controls {
+    position: static;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+
+  .App-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .logo {
+    height: 35px;
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .App {
+    padding: 0.5rem; /* Minimal padding on very small screens */
+  }
+
+  .App-header h1 {
+    font-size: 2rem; /* Even smaller heading on very small screens */
+  }
+}

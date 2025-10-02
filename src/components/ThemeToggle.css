@@ -1,0 +1,71 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-toggle-bg, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--color-toggle-border, rgba(255, 255, 255, 0.2));
+  border-radius: 8px;
+  color: var(--color-toggle-text, inherit);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-toggle-hover, rgba(255, 255, 255, 0.2));
+  transform: translateY(-1px);
+}
+
+.theme-toggle:active {
+  transform: translateY(0);
+}
+
+.theme-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.theme-label {
+  font-size: 0.85rem;
+  min-width: 50px;
+  text-align: left;
+}
+
+/* Light theme */
+[data-theme="light"] .theme-toggle {
+  --color-toggle-bg: rgba(0, 0, 0, 0.05);
+  --color-toggle-border: rgba(0, 0, 0, 0.1);
+  --color-toggle-text: #374151;
+  --color-toggle-hover: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme */
+[data-theme="dark"] .theme-toggle {
+  --color-toggle-bg: rgba(51, 65, 85, 0.6);
+  --color-toggle-border: rgba(71, 85, 105, 0.8);
+  --color-toggle-text: #f1f5f9;
+  --color-toggle-hover: rgba(71, 85, 105, 0.8);
+}
+
+/* Tactical theme */
+[data-theme="tactical"] .theme-toggle {
+  --color-toggle-bg: rgba(107, 107, 79, 0.6); /* olive */
+  --color-toggle-border: rgba(139, 115, 85, 0.8); /* tan border */
+  --color-toggle-text: #e6e6d4; /* light tan */
+  --color-toggle-hover: rgba(139, 115, 85, 0.8); /* tan hover */
+}
+
+@media (max-width: 640px) {
+  .theme-label {
+    display: none;
+  }
+  
+  .theme-toggle {
+    padding: 0.5rem;
+    min-width: auto;
+  }
+}

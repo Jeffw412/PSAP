@@ -1,0 +1,534 @@
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.popup-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 1200px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popupSlideIn 0.3s ease-out;
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.popup-header h2 {
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.popup-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  min-height: 0;
+}
+
+.map-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.map-section h3 {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.coordinates-display {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.coordinates-display strong {
+  color: #1f2937;
+}
+
+.coordinates-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  text-align: center;
+  padding: 2rem;
+}
+
+.coordinates-error .error-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.coordinates-error h4 {
+  color: #dc2626;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.coordinates-error p {
+  color: #7f1d1d;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.results-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Override PSAPResults styles for popup */
+.results-section .psap-results {
+  margin: 0;
+}
+
+.results-section .results-container h2 {
+  display: none; /* Hide duplicate title */
+}
+
+.popup-footer {
+  padding: 1rem 2rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-footer-button {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.close-footer-button:hover {
+  background-color: #4b5563;
+}
+
+/* Dark theme styles */
+[data-theme="dark"] .popup-container {
+  background: #1e293b;
+}
+
+[data-theme="dark"] .popup-header {
+  background-color: #0f172a;
+  border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .popup-header h2 {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .close-button {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .close-button:hover {
+  background-color: #334155;
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .map-section h3 {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .coordinates-display {
+  background-color: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .coordinates-display strong {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .coordinates-error {
+  background-color: #7f1d1d;
+  border-color: #dc2626;
+}
+
+[data-theme="dark"] .coordinates-error h4 {
+  color: #fecaca;
+}
+
+[data-theme="dark"] .coordinates-error p {
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .popup-footer {
+  background-color: #0f172a;
+  border-top-color: #334155;
+}
+
+[data-theme="dark"] .close-footer-button {
+  background-color: #475569;
+}
+
+[data-theme="dark"] .close-footer-button:hover {
+  background-color: #64748b;
+}
+
+/* Tactical theme styles */
+[data-theme="tactical"] .popup-container {
+  background: #4a4a3a; /* dark olive */
+}
+
+[data-theme="tactical"] .popup-header {
+  background-color: #3c3c2a; /* darker olive */
+  border-bottom-color: #6b6b4f; /* olive border */
+}
+
+[data-theme="tactical"] .popup-header h2 {
+  color: #e6e6d4; /* light tan */
+}
+
+[data-theme="tactical"] .close-button {
+  color: #c9c9b3; /* muted tan */
+}
+
+[data-theme="tactical"] .close-button:hover {
+  background-color: #5a5a47; /* medium olive */
+  color: #e6e6d4; /* light tan */
+}
+
+[data-theme="tactical"] .map-section h3 {
+  color: #e6e6d4; /* light tan */
+}
+
+[data-theme="tactical"] .coordinates-display {
+  background-color: #5a5a47; /* medium olive */
+  border-color: #7a7a5f; /* olive border */
+  color: #c9c9b3; /* muted tan */
+}
+
+[data-theme="tactical"] .coordinates-display strong {
+  color: #e6e6d4; /* light tan */
+}
+
+[data-theme="tactical"] .coordinates-error {
+  background-color: #6b4423; /* dark brown */
+  border-color: #8b5a2b; /* brown border */
+}
+
+[data-theme="tactical"] .coordinates-error h4 {
+  color: #cd853f; /* sandy brown */
+}
+
+[data-theme="tactical"] .coordinates-error p {
+  color: #daa520; /* goldenrod */
+}
+
+[data-theme="tactical"] .popup-footer {
+  background-color: #3c3c2a; /* darker olive */
+  border-top-color: #6b6b4f; /* olive border */
+}
+
+[data-theme="tactical"] .close-footer-button {
+  background-color: #7a7a5f; /* olive */
+}
+
+[data-theme="tactical"] .close-footer-button:hover {
+  background-color: #8b8b6b; /* lighter olive */
+}
+
+/* Nearby PSAP loading and error states */
+.nearby-loading {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.nearby-loading .loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.nearby-loading p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.nearby-error {
+  text-align: center;
+  padding: 2rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.nearby-error p {
+  color: #dc2626;
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+}
+
+.retry-button {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #b91c1c;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dark theme styles for loading/error */
+[data-theme="dark"] .nearby-loading {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+[data-theme="dark"] .nearby-loading p {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .nearby-loading .loading-spinner {
+  border-color: #475569;
+  border-top-color: #60a5fa;
+}
+
+[data-theme="dark"] .nearby-error {
+  background-color: #7f1d1d;
+  border-color: #991b1b;
+}
+
+[data-theme="dark"] .nearby-error p {
+  color: #fca5a5;
+}
+
+/* Tactical theme styles for loading/error */
+[data-theme="tactical"] .nearby-loading {
+  background-color: #5a5a47;
+  border-color: #7a7a5f;
+}
+
+[data-theme="tactical"] .nearby-loading p {
+  color: #c9c9b3;
+}
+
+[data-theme="tactical"] .nearby-loading .loading-spinner {
+  border-color: #7a7a5f;
+  border-top-color: #8b7355;
+}
+
+[data-theme="tactical"] .nearby-error {
+  background-color: #6b4423;
+  border-color: #8b5a2b;
+}
+
+[data-theme="tactical"] .nearby-error p {
+  color: #daa520;
+}
+
+[data-theme="tactical"] .retry-button {
+  background-color: #cd853f;
+}
+
+[data-theme="tactical"] .retry-button:hover {
+  background-color: #a0522d;
+}
+
+/* Auto dark theme (system preference) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .popup-container {
+    background: #1e293b;
+  }
+
+  :root:not([data-theme]) .popup-header {
+    background-color: #0f172a;
+    border-bottom-color: #334155;
+  }
+
+  :root:not([data-theme]) .popup-header h2 {
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .close-button {
+    color: #cbd5e1;
+  }
+
+  :root:not([data-theme]) .close-button:hover {
+    background-color: #334155;
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .map-section h3 {
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .coordinates-display {
+    background-color: #334155;
+    border-color: #475569;
+    color: #e2e8f0;
+  }
+
+  :root:not([data-theme]) .coordinates-display strong {
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .coordinates-error {
+    background-color: #7f1d1d;
+    border-color: #dc2626;
+  }
+
+  :root:not([data-theme]) .coordinates-error h4 {
+    color: #fecaca;
+  }
+
+  :root:not([data-theme]) .coordinates-error p {
+    color: #fca5a5;
+  }
+
+  :root:not([data-theme]) .popup-footer {
+    background-color: #0f172a;
+    border-top-color: #334155;
+  }
+
+  :root:not([data-theme]) .close-footer-button {
+    background-color: #475569;
+  }
+
+  :root:not([data-theme]) .close-footer-button:hover {
+    background-color: #64748b;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .popup-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .popup-overlay {
+    padding: 0.5rem;
+  }
+  
+  .popup-container {
+    max-height: 95vh;
+  }
+  
+  .popup-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .popup-content {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+  
+  .popup-footer {
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .popup-content {
+    padding: 1rem;
+  }
+  
+  .close-footer-button {
+    width: 100%;
+  }
+}

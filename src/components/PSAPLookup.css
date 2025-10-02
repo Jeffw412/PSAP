@@ -1,0 +1,329 @@
+.psap-lookup {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem; /* Increase horizontal padding to prevent edge overflow */
+}
+
+.lookup-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.lookup-container h2 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.instruction-text {
+  color: #6b7280;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.lookup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.coordinate-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: 'Courier New', monospace;
+  resize: vertical;
+  min-height: 60px;
+  max-height: 120px;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.coordinate-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.coordinate-input.invalid {
+  border-color: #dc2626;
+}
+
+.coordinate-input:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+}
+
+.validation-error {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.lookup-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 50px;
+}
+
+.lookup-button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.lookup-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.format-examples {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.format-examples h4 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.format-examples ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.format-examples li {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.format-examples code {
+  background-color: #e5e7eb;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+[data-theme="dark"] .lookup-container {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .lookup-container h2 {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .instruction-text {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .coordinate-input {
+  background-color: #334155;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .coordinate-input:focus {
+  border-color: #60a5fa;
+}
+
+[data-theme="dark"] .format-examples {
+  background-color: #334155;
+}
+
+[data-theme="dark"] .format-examples h4 {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .format-examples li {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .format-examples code {
+  background-color: #475569;
+  color: #f1f5f9;
+}
+
+/* Tactical theme styles */
+[data-theme="tactical"] .lookup-container {
+  background: #4a4a3a; /* dark olive */
+  border-color: #6b6b4f; /* olive border */
+}
+
+[data-theme="tactical"] .lookup-container h2 {
+  color: #e6e6d4; /* light tan */
+}
+
+[data-theme="tactical"] .instruction-text {
+  color: #c9c9b3; /* muted tan */
+}
+
+[data-theme="tactical"] .coordinate-input {
+  background-color: #5a5a47; /* medium olive */
+  border-color: #7a7a5f; /* olive border */
+  color: #e6e6d4; /* light tan text */
+}
+
+[data-theme="tactical"] .coordinate-input:focus {
+  border-color: #8b7355; /* tan focus */
+}
+
+[data-theme="tactical"] .lookup-button {
+  background-color: #8b7355; /* tan */
+  color: #2a2a1f; /* dark olive text */
+}
+
+[data-theme="tactical"] .lookup-button:hover:not(:disabled) {
+  background-color: #a0845c; /* lighter tan */
+}
+
+[data-theme="tactical"] .format-examples {
+  background-color: #5a5a47; /* medium olive */
+}
+
+[data-theme="tactical"] .format-examples h4 {
+  color: #e6e6d4; /* light tan */
+}
+
+[data-theme="tactical"] .format-examples li {
+  color: #c9c9b3; /* muted tan */
+}
+
+[data-theme="tactical"] .format-examples code {
+  background-color: #6b6b4f; /* olive */
+  color: #e6e6d4; /* light tan */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .lookup-container {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  :root:not([data-theme]) .lookup-container h2 {
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .instruction-text {
+    color: #cbd5e1;
+  }
+
+  :root:not([data-theme]) .coordinate-input {
+    background-color: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .coordinate-input:focus {
+    border-color: #60a5fa;
+  }
+
+  :root:not([data-theme]) .format-examples {
+    background-color: #334155;
+  }
+
+  :root:not([data-theme]) .format-examples h4 {
+    color: #f1f5f9;
+  }
+
+  :root:not([data-theme]) .format-examples li {
+    color: #cbd5e1;
+  }
+
+  :root:not([data-theme]) .format-examples code {
+    background-color: #475569;
+    color: #f1f5f9;
+  }
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .psap-lookup {
+    padding: 0 1.5rem; /* Maintain adequate padding on smaller screens */
+  }
+
+  .lookup-container {
+    padding: 1.5rem; /* Reduce container padding */
+  }
+
+  .lookup-container h2 {
+    font-size: 1.5rem; /* Smaller heading on mobile */
+  }
+
+  .instruction-text {
+    font-size: 1rem; /* Smaller instruction text */
+  }
+}
+
+@media (max-width: 480px) {
+  .psap-lookup {
+    padding: 0 1rem; /* Maintain reasonable padding on very small screens */
+  }
+
+  .lookup-container {
+    padding: 1rem; /* Further reduce container padding */
+    border-radius: 8px; /* Smaller border radius */
+  }
+
+  .coordinate-input {
+    font-size: 0.9rem; /* Smaller font size for input */
+    padding: 0.5rem; /* Reduce padding on very small screens */
+    min-height: 50px; /* Smaller minimum height */
+  }
+
+  .lookup-button {
+    font-size: 1rem; /* Smaller button text */
+    padding: 0.875rem 1.5rem; /* Adjust button padding */
+  }
+}
