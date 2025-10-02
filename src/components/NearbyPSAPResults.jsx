@@ -23,6 +23,22 @@ const NearbyPSAPResults = ({ psaps, onBack }) => {
             <span className="value">{trimmedLine.replace('PSAP:', '').trim()}</span>
           </>
         )
+      } else if (trimmedLine.startsWith('PSAP Website:')) {
+        lineClass += ' website-line'
+        const websiteUrl = trimmedLine.replace('PSAP Website:', '').trim()
+        content = (
+          <>
+            <span className="label">PSAP Website:</span>
+            <a
+              href={websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="website-link value"
+            >
+              {websiteUrl}
+            </a>
+          </>
+        )
       } else if (trimmedLine.startsWith('Phone:')) {
         lineClass += ' phone-line'
         const phoneNumber = trimmedLine.replace('Phone:', '').trim()
@@ -69,7 +85,20 @@ const NearbyPSAPResults = ({ psaps, onBack }) => {
           {psaps.map((psap, index) => (
             <div key={index} className={`psap-card ${index === 0 ? 'primary-psap' : 'backup-psap'}`}>
               <div className="psap-header">
-                <h3 className="psap-name">{psap.psapName || 'PSAP Information'}</h3>
+                <h3 className="psap-name">
+                  {psap.psapWebsite ? (
+                    <a
+                      href={psap.psapWebsite}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="psap-website-link"
+                    >
+                      {psap.psapName || 'PSAP Information'}
+                    </a>
+                  ) : (
+                    psap.psapName || 'PSAP Information'
+                  )}
+                </h3>
                 <div className={`psap-badge ${index === 0 ? 'primary-badge' : 'backup-badge'}`}>
                   {index === 0 ? 'Primary' : `Backup ${index}`}
                 </div>

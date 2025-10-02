@@ -5,6 +5,7 @@ const PSAPResults = ({ data, onFindNearby }) => {
 
   const {
     psapName,
+    psapWebsite,
     phoneNumbers = [],
     address,
     jurisdictionArea,
@@ -31,6 +32,22 @@ const PSAPResults = ({ data, onFindNearby }) => {
           <>
             <span className="label">PSAP:</span>
             <span className="value">{trimmedLine.replace('PSAP:', '').trim()}</span>
+          </>
+        )
+      } else if (trimmedLine.startsWith('PSAP Website:')) {
+        lineClass += ' website-line'
+        const websiteUrl = trimmedLine.replace('PSAP Website:', '').trim()
+        content = (
+          <>
+            <span className="label">PSAP Website:</span>
+            <a
+              href={websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="website-link value"
+            >
+              {websiteUrl}
+            </a>
           </>
         )
       } else if (trimmedLine.startsWith('Phone:')) {
@@ -69,7 +86,20 @@ const PSAPResults = ({ data, onFindNearby }) => {
 
         <div className="psap-card">
           <div className="psap-header">
-            <h3 className="psap-name">{psapName || 'PSAP Information'}</h3>
+            <h3 className="psap-name">
+              {psapWebsite ? (
+                <a
+                  href={psapWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="psap-website-link"
+                >
+                  {psapName || 'PSAP Information'}
+                </a>
+              ) : (
+                psapName || 'PSAP Information'
+              )}
+            </h3>
             <div className="emergency-badge">Emergency Services</div>
           </div>
 

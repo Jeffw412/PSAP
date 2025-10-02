@@ -60,6 +60,7 @@ const parseMultiplePSAPResponse = (responseText) => {
     const lines = section.split('\n').filter(line => line.trim())
     const psap = {
       psapName: '',
+      psapWebsite: '',
       phoneNumbers: [],
       jurisdictionArea: '',
       rawResponse: section.trim()
@@ -70,6 +71,8 @@ const parseMultiplePSAPResponse = (responseText) => {
 
       if (trimmedLine.startsWith('PSAP:')) {
         psap.psapName = trimmedLine.replace('PSAP:', '').trim()
+      } else if (trimmedLine.startsWith('PSAP Website:')) {
+        psap.psapWebsite = trimmedLine.replace('PSAP Website:', '').trim()
       } else if (trimmedLine.startsWith('Phone:')) {
         const phoneNumber = trimmedLine.replace('Phone:', '').trim()
         psap.phoneNumbers.push({
@@ -97,6 +100,7 @@ const parsePSAPResponse = (responseText) => {
   const lines = responseText.split('\n').filter(line => line.trim())
   const result = {
     psapName: '',
+    psapWebsite: '',
     phoneNumbers: [],
     jurisdictionArea: '',
     rawResponse: responseText
@@ -107,6 +111,8 @@ const parsePSAPResponse = (responseText) => {
 
     if (trimmedLine.startsWith('PSAP:')) {
       result.psapName = trimmedLine.replace('PSAP:', '').trim()
+    } else if (trimmedLine.startsWith('PSAP Website:')) {
+      result.psapWebsite = trimmedLine.replace('PSAP Website:', '').trim()
     } else if (trimmedLine.startsWith('Phone:')) {
       const phoneNumber = trimmedLine.replace('Phone:', '').trim()
       result.phoneNumbers.push({
