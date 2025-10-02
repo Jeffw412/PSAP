@@ -4,7 +4,7 @@ const NearbyPSAPResults = ({ psaps, onBack }) => {
   if (!psaps || psaps.length === 0) return null
 
   // Function to render the raw response with proper line breaks and styling
-  const renderFormattedResponse = (text) => {
+  const renderFormattedResponse = (text, psap) => {
     if (!text) return null
 
     return text.split('\n').map((line, index) => {
@@ -17,28 +17,29 @@ const NearbyPSAPResults = ({ psaps, onBack }) => {
 
       if (trimmedLine.startsWith('PSAP:')) {
         lineClass += ' psap-line'
+        const psapName = trimmedLine.replace('PSAP:', '').trim()
         content = (
           <>
             <span className="label">PSAP:</span>
-            <span className="value">{trimmedLine.replace('PSAP:', '').trim()}</span>
+            <span className="value">
+              {psap.psapWebsite ? (
+                <a
+                  href={psap.psapWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="psap-name-link"
+                >
+                  {psapName}
+                </a>
+              ) : (
+                psapName
+              )}
+            </span>
           </>
         )
       } else if (trimmedLine.startsWith('PSAP Website:')) {
-        lineClass += ' website-line'
-        const websiteUrl = trimmedLine.replace('PSAP Website:', '').trim()
-        content = (
-          <>
-            <span className="label">PSAP Website:</span>
-            <a
-              href={websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="website-link value"
-            >
-              {websiteUrl}
-            </a>
-          </>
-        )
+        // Skip rendering the website line - it's embedded in the PSAP name
+        return null
       } else if (trimmedLine.startsWith('Phone:')) {
         lineClass += ' phone-line'
         const phoneNumber = trimmedLine.replace('Phone:', '').trim()
@@ -109,7 +110,7 @@ const NearbyPSAPResults = ({ psaps, onBack }) => {
                 {psap.rawResponse && (
                   <div className="detail-section">
                     <div className="formatted-response">
-                      {renderFormattedResponse(psap.rawResponse)}
+                      {renderFormattedResponse(psap.rawResponse, psap)}
                     </div>
                   </div>
                 )}

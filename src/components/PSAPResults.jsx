@@ -28,28 +28,29 @@ const PSAPResults = ({ data, onFindNearby }) => {
 
       if (trimmedLine.startsWith('PSAP:')) {
         lineClass += ' psap-line'
+        const psapName = trimmedLine.replace('PSAP:', '').trim()
         content = (
           <>
             <span className="label">PSAP:</span>
-            <span className="value">{trimmedLine.replace('PSAP:', '').trim()}</span>
+            <span className="value">
+              {psapWebsite ? (
+                <a
+                  href={psapWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="psap-name-link"
+                >
+                  {psapName}
+                </a>
+              ) : (
+                psapName
+              )}
+            </span>
           </>
         )
       } else if (trimmedLine.startsWith('PSAP Website:')) {
-        lineClass += ' website-line'
-        const websiteUrl = trimmedLine.replace('PSAP Website:', '').trim()
-        content = (
-          <>
-            <span className="label">PSAP Website:</span>
-            <a
-              href={websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="website-link value"
-            >
-              {websiteUrl}
-            </a>
-          </>
-        )
+        // Skip rendering the website line - it's embedded in the PSAP name
+        return null
       } else if (trimmedLine.startsWith('Phone:')) {
         lineClass += ' phone-line'
         const phoneNumber = trimmedLine.replace('Phone:', '').trim()
