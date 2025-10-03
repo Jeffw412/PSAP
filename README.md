@@ -1,6 +1,6 @@
 # PSAP AI - Emergency Response Locator
 
-A web application for Global Rescue Emergency Response Services that locates Public Safety Answering Points (PSAPs) from GPS coordinates using ChatGPT API integration.
+A web application for Global Rescue Emergency Response Services that locates Public Safety Answering Points (PSAPs) from GPS coordinates using Google AI Studio (Gemini) API integration.
 
 ## 🚨 Features
 
@@ -8,7 +8,7 @@ A web application for Global Rescue Emergency Response Services that locates Pub
 - **Nearby PSAP Search**: Find backup PSAPs within 50-mile radius for redundancy
 - **Interactive Maps**: Google Maps integration showing incident locations
 - **Multiple Themes**: Light, Dark, and Tactical themes for different operational environments
-- **Real-time Data**: Direct integration with ChatGPT Assistant API for accurate PSAP information
+- **Real-time Data**: Direct integration with Google AI Studio (Gemini) API for accurate PSAP information
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **Firebase Authentication**: Secure email/password authentication
 
@@ -22,7 +22,7 @@ This internal tool is designed for Global Rescue emergency response teams to qui
 - **Authentication**: Firebase Auth (email/password)
 - **Hosting**: Firebase Hosting
 - **Maps**: Google Maps JavaScript API
-- **AI Integration**: OpenAI ChatGPT Assistant API
+- **AI Integration**: Google AI Studio (Gemini) API
 - **Styling**: CSS3 with custom themes
 
 ## 🚀 Live Application
@@ -47,7 +47,7 @@ This internal tool is designed for Global Rescue emergency response teams to qui
 - Node.js 18+
 - Firebase CLI
 - Google Maps API key
-- OpenAI API key
+- Google AI Studio API key
 
 ### Installation
 
@@ -95,18 +95,18 @@ For security reasons, API keys are not included in the repository. See `DEPLOYME
 
 2. **Add your API keys** to `.env.local`:
    ```env
-   VITE_OPENAI_API_KEY=your-openai-api-key
-   VITE_OPENAI_ASSISTANT_ID=your-assistant-id
+   VITE_GOOGLE_AI_API_KEY=your-google-ai-studio-api-key
    VITE_GOOGLE_MAPS_API_KEY=your-google-maps-key
    ```
 
 3. **Update index.html** with your Google Maps API key
 
-### ChatGPT Assistant
+### Google AI Studio (Gemini) Integration
 - **Expected Response Format**:
   ```
   PSAP: [Name]
-  Phone: [Number]
+  PSAP Website: [Website URL]
+  Phone: [Dispatch/Non-Emergency Number(s)]
   Jurisdiction: [Coverage Area]
   ```
 
@@ -129,7 +129,7 @@ src/
 │   ├── Login.jsx       # Authentication component
 │   └── ThemeToggle.jsx # Theme switching
 ├── services/           # API services
-│   └── psapService.js  # ChatGPT Assistant integration
+│   └── psapService.js  # Google AI Studio (Gemini) integration
 ├── contexts/           # React contexts
 │   ├── AuthContext.jsx # Firebase authentication
 │   └── ThemeContext.jsx # Theme management
@@ -141,7 +141,7 @@ src/
 ## 🔄 Workflow
 
 1. **User Input**: Enter GPS coordinates in any supported format
-2. **Primary Search**: ChatGPT Assistant finds the primary PSAP
+2. **Primary Search**: Google AI Studio (Gemini) finds the primary PSAP
 3. **Display Results**: Show PSAP details with interactive map
 4. **Backup Search**: Option to find nearby PSAPs for redundancy
 5. **Multiple Options**: Display primary + backup PSAPs with contact info

@@ -1,9 +1,13 @@
-// PSAP Service for handling ChatGPT Assistant API calls directly from frontend
+// PSAP Service for handling Google AI Studio (Gemini) API calls directly from frontend
 // For internal tool use - API keys are hardcoded for simplicity
 
-// OpenAI Configuration
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || 'your-openai-api-key-here'
-const ASSISTANT_ID = import.meta.env.VITE_OPENAI_ASSISTANT_ID || 'asst_RN0vHGUFslFjHb6jjdz6GhKf'
+import { GoogleGenAI } from '@google/genai'
+
+// Google AI Studio Configuration
+const GOOGLE_AI_API_KEY = import.meta.env.VITE_GOOGLE_AI_API_KEY || 'your-google-ai-api-key-here'
+
+// Initialize Google GenAI client
+const ai = new GoogleGenAI({ apiKey: GOOGLE_AI_API_KEY })
 
 // Retry configuration for frontend calls
 const RETRY_CONFIG = {
@@ -47,6 +51,71 @@ const retryWithBackoff = async (fn, retries = RETRY_CONFIG.maxRetries) => {
     }
     throw error
   }
+}
+
+// PSAP lookup prompt template
+const createPSAPLookupPrompt = (coordinates) => {
+  return `You are a Public Safety Answering Point (PSAP) locator assistant. A PSAP is a facility equipped to receive and process emergency calls (911 in the US). Your task is to find the specific PSAP that serves the given GPS coordinates.
+
+GPS Coordinates: ${coordinates}
+
+Please provide accurate, real information about the PSAP that serves this location. Return the information in this EXACT format:
+
+PSAP: [Official PSAP Name]
+PSAP Website: [Official website URL if available]
+Phone: [Dispatch/Non-emergency number(s)]
+Jurisdiction: [Areas/regions served]
+
+Important requirements:
+- Provide only real, accurate information - no fictional or placeholder data
+- Use the exact format shown above
+- Include the official PSAP name, not just the city or county name
+- Provide DISPATCH or NON-EMERGENCY phone numbers, NOT 911 or administrative numbers
+- If multiple dispatch/non-emergency numbers exist, list them separated by commas
+- If no website is available, you may omit the "PSAP Website:" line
+- Be specific about the jurisdiction areas served
+
+Example format:
+PSAP: Metro Emergency Communications Center
+PSAP Website: https://example-metro-911.gov
+Phone: (555) 123-4567, (555) 123-4568
+Jurisdiction: Downtown Metro Area, East District, West District`
+}
+
+// Nearby PSAPs lookup prompt template
+const createNearbyPSAPsPrompt = (coordinates) => {
+  return `You are a Public Safety Answering Point (PSAP) locator assistant. A PSAP is a facility equipped to receive and process emergency calls (911 in the US). Your task is to find multiple PSAPs near the given GPS coordinates for backup/alternative emergency response options.
+
+GPS Coordinates: ${coordinates}
+
+Please provide accurate, real information about 3-5 PSAPs that serve areas near this location. Return the information for each PSAP in this EXACT format:
+
+PSAP: [Official PSAP Name]
+PSAP Website: [Official website URL if available]
+Phone: [Dispatch/Non-emergency number(s)]
+Jurisdiction: [Areas/regions served]
+
+[blank line between each PSAP]
+
+Important requirements:
+- Provide only real, accurate information - no fictional or placeholder data
+- Use the exact format shown above for each PSAP
+- Include official PSAP names, not just city or county names
+- Provide DISPATCH or NON-EMERGENCY phone numbers, NOT 911 or administrative numbers
+- If multiple dispatch/non-emergency numbers exist for a PSAP, list them separated by commas
+- If no website is available, you may omit the "PSAP Website:" line
+- Be specific about jurisdiction areas served
+- Separate each PSAP with a blank line
+
+Example format:
+PSAP: Metro Emergency Communications Center
+PSAP Website: https://example-metro-911.gov
+Phone: (555) 123-4567, (555) 123-4568
+Jurisdiction: Downtown Metro Area, East District
+
+PSAP: County Emergency Services
+Phone: (555) 987-6543, (555) 987-6544
+Jurisdiction: Rural County Areas, Suburban Districts`
 }
 
 
@@ -114,10 +183,14 @@ const parsePSAPResponse = (responseText) => {
     } else if (trimmedLine.startsWith('PSAP Website:')) {
       result.psapWebsite = trimmedLine.replace('PSAP Website:', '').trim()
     } else if (trimmedLine.startsWith('Phone:')) {
-      const phoneNumber = trimmedLine.replace('Phone:', '').trim()
-      result.phoneNumbers.push({
-        type: 'Emergency',
-        number: phoneNumber
+      const phoneNumbersText = trimmedLine.replace('Phone:', '').trim()
+      // Handle multiple phone numbers separated by commas
+      const phoneNumbers = phoneNumbersText.split(',').map(num => num.trim()).filter(num => num)
+      phoneNumbers.forEach(phoneNumber => {
+        result.phoneNumbers.push({
+          type: 'Dispatch/Non-Emergency',
+          number: phoneNumber
+        })
       })
     } else if (trimmedLine.startsWith('Jurisdiction:')) {
       result.jurisdictionArea = trimmedLine.replace('Jurisdiction:', '').trim()
@@ -131,140 +204,23 @@ const parsePSAPResponse = (responseText) => {
 export const lookupNearbyPSAPs = async (coordinates) => {
   console.log('Starting nearby PSAP lookup for coordinates:', coordinates)
 
-  const callOpenAIAssistantForNearby = async () => {
-    console.log('Calling OpenAI Assistant for nearby PSAPs...')
+  const callGeminiAPIForNearby = async () => {
+    console.log('Calling Google Gemini API for nearby PSAPs...')
 
-    // Create a thread
-    console.log('Creating thread...')
-    const threadResponse = await fetch('https://api.openai.com/v1/threads', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-      },
-      body: JSON.stringify({})
+    const prompt = createNearbyPSAPsPrompt(coordinates)
+    console.log('Generated nearby PSAPs prompt:', prompt)
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-pro',
+      contents: prompt
     })
 
-    if (!threadResponse.ok) {
-      throw new Error(`Failed to create thread: ${threadResponse.status}`)
+    if (!response || !response.text) {
+      throw new Error('No response from Gemini API')
     }
 
-    const thread = await threadResponse.json()
-    const threadId = thread.id
-    console.log('Thread created:', threadId)
-
-    // Add a message to the thread with nearby PSAP request
-    console.log('Adding message to thread...')
-    const nearbyMessage = `Find all nearby PSAPs and emergency dispatch centers within a 50-mile radius of these coordinates: ${coordinates}.
-
-Please provide multiple backup options in case the primary PSAP is unavailable. Include:
-- Primary PSAP for this exact location
-- 2-3 nearby backup PSAPs that could handle emergencies in this area
-- Regional dispatch centers that cover this area
-
-Format each PSAP as:
-PSAP: [Name]
-Phone: [Number]
-Jurisdiction: [Coverage Area]
-
-Separate each PSAP with a blank line.`
-
-    const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-      },
-      body: JSON.stringify({
-        role: 'user',
-        content: nearbyMessage
-      })
-    })
-
-    if (!messageResponse.ok) {
-      throw new Error(`Failed to add message: ${messageResponse.status}`)
-    }
-
-    // Run the assistant
-    console.log('Running assistant...')
-    const runResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-      },
-      body: JSON.stringify({
-        assistant_id: ASSISTANT_ID
-      })
-    })
-
-    if (!runResponse.ok) {
-      throw new Error(`Failed to run assistant: ${runResponse.status}`)
-    }
-
-    const run = await runResponse.json()
-    const runId = run.id
-    console.log('Run started:', runId)
-
-    // Poll for completion
-    let runStatus = 'queued'
-    let attempts = 0
-    const maxAttempts = 30 // 30 seconds timeout
-    console.log('Polling for completion...')
-
-    while (runStatus !== 'completed' && attempts < maxAttempts) {
-      await sleep(1000) // Wait 1 second
-
-      const statusResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}`, {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v2'
-        }
-      })
-
-      if (!statusResponse.ok) {
-        throw new Error(`Failed to check run status: ${statusResponse.status}`)
-      }
-
-      const statusData = await statusResponse.json()
-      runStatus = statusData.status
-      attempts++
-      console.log(`Run status: ${runStatus} (attempt ${attempts})`)
-
-      if (runStatus === 'failed') {
-        console.error('Assistant run failed:', statusData)
-        throw new Error('Assistant run failed')
-      }
-    }
-
-    if (runStatus !== 'completed') {
-      throw new Error('Assistant run timed out')
-    }
-
-    // Get the messages
-    const messagesResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'OpenAI-Beta': 'assistants=v2'
-      }
-    })
-
-    if (!messagesResponse.ok) {
-      throw new Error(`Failed to get messages: ${messagesResponse.status}`)
-    }
-
-    const messages = await messagesResponse.json()
-    const assistantMessage = messages.data.find(msg => msg.role === 'assistant')
-
-    if (!assistantMessage || !assistantMessage.content || !assistantMessage.content[0]) {
-      throw new Error('No response from assistant')
-    }
-
-    const responseText = assistantMessage.content[0].text.value
-    console.log('Assistant response:', responseText)
+    const responseText = response.text
+    console.log('Gemini response:', responseText)
 
     // Parse multiple PSAPs from the response
     const psaps = parseMultiplePSAPResponse(responseText)
@@ -274,11 +230,11 @@ Separate each PSAP with a blank line.`
   }
 
   try {
-    const result = await retryWithBackoff(callOpenAIAssistantForNearby)
+    const result = await retryWithBackoff(callGeminiAPIForNearby)
     console.log('Nearby PSAP lookup successful:', result)
     return result
   } catch (error) {
-    console.error('Error calling OpenAI Assistant for nearby PSAPs:', error)
+    console.error('Error calling Gemini API for nearby PSAPs:', error)
     throw new Error(`Failed to find nearby PSAPs: ${error.message}`)
   }
 }
@@ -286,126 +242,23 @@ Separate each PSAP with a blank line.`
 export const lookupPSAP = async (coordinates) => {
   console.log('Starting PSAP lookup for coordinates:', coordinates)
 
-  const callOpenAIAssistant = async () => {
-    console.log('Calling OpenAI Assistant directly...')
+  const callGeminiAPI = async () => {
+    console.log('Calling Google Gemini API...')
 
-    // Create a thread
-    console.log('Creating thread...')
-    const threadResponse = await fetch('https://api.openai.com/v1/threads', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-      },
-      body: JSON.stringify({})
+    const prompt = createPSAPLookupPrompt(coordinates)
+    console.log('Generated prompt:', prompt)
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-pro',
+      contents: prompt
     })
 
-    if (!threadResponse.ok) {
-      throw new Error(`Failed to create thread: ${threadResponse.status}`)
+    if (!response || !response.text) {
+      throw new Error('No response from Gemini API')
     }
 
-    const thread = await threadResponse.json()
-    const threadId = thread.id
-    console.log('Thread created:', threadId)
-
-    // Add a message to the thread
-    console.log('Adding message to thread...')
-    const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-      },
-      body: JSON.stringify({
-        role: 'user',
-        content: coordinates
-      })
-    })
-
-    if (!messageResponse.ok) {
-      throw new Error(`Failed to add message: ${messageResponse.status}`)
-    }
-
-    // Run the assistant
-    console.log('Running assistant...')
-    const runResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-      },
-      body: JSON.stringify({
-        assistant_id: ASSISTANT_ID
-      })
-    })
-
-    if (!runResponse.ok) {
-      throw new Error(`Failed to run assistant: ${runResponse.status}`)
-    }
-
-    const run = await runResponse.json()
-    const runId = run.id
-    console.log('Run started:', runId)
-
-    // Poll for completion
-    let runStatus = 'queued'
-    let attempts = 0
-    const maxAttempts = 30 // 30 seconds timeout
-    console.log('Polling for completion...')
-
-    while (runStatus !== 'completed' && attempts < maxAttempts) {
-      await sleep(1000) // Wait 1 second
-
-      const statusResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}`, {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v2'
-        }
-      })
-
-      if (!statusResponse.ok) {
-        throw new Error(`Failed to check run status: ${statusResponse.status}`)
-      }
-
-      const statusData = await statusResponse.json()
-      runStatus = statusData.status
-      attempts++
-      console.log(`Run status: ${runStatus} (attempt ${attempts})`)
-
-      if (runStatus === 'failed') {
-        console.error('Assistant run failed:', statusData)
-        throw new Error('Assistant run failed')
-      }
-    }
-
-    if (runStatus !== 'completed') {
-      throw new Error('Assistant run timed out')
-    }
-
-    // Get the messages
-    const messagesResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'OpenAI-Beta': 'assistants=v2'
-      }
-    })
-
-    if (!messagesResponse.ok) {
-      throw new Error(`Failed to get messages: ${messagesResponse.status}`)
-    }
-
-    const messages = await messagesResponse.json()
-    const assistantMessage = messages.data.find(msg => msg.role === 'assistant')
-
-    if (!assistantMessage || !assistantMessage.content || !assistantMessage.content[0]) {
-      throw new Error('No response from assistant')
-    }
-
-    const responseText = assistantMessage.content[0].text.value
-    console.log('Assistant response:', responseText)
+    const responseText = response.text
+    console.log('Gemini response:', responseText)
 
     const parsedResult = parsePSAPResponse(responseText)
     console.log('Parsed result:', parsedResult)
@@ -414,11 +267,11 @@ export const lookupPSAP = async (coordinates) => {
   }
 
   try {
-    const result = await retryWithBackoff(callOpenAIAssistant)
+    const result = await retryWithBackoff(callGeminiAPI)
     console.log('PSAP lookup successful:', result)
     return result
   } catch (error) {
-    console.error('Error calling OpenAI Assistant:', error)
+    console.error('Error calling Gemini API:', error)
     throw new Error(`Failed to lookup PSAP: ${error.message}`)
   }
 }

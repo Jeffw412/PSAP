@@ -6,9 +6,8 @@ This application requires several API keys to function properly. For security re
 
 ### Required API Keys
 
-1. **OpenAI API Key**: For ChatGPT Assistant integration
-2. **OpenAI Assistant ID**: The specific assistant trained for PSAP lookups
-3. **Google Maps API Key**: For displaying incident location maps
+1. **Google AI Studio API Key**: For Gemini AI integration to lookup PSAP information
+2. **Google Maps API Key**: For displaying incident location maps
 
 ### Local Development Setup
 
@@ -19,8 +18,7 @@ cp .env.local.example .env.local
 
 2. Edit `.env.local` with your actual API keys:
 ```env
-VITE_OPENAI_API_KEY=your-actual-openai-api-key
-VITE_OPENAI_ASSISTANT_ID=your-actual-assistant-id
+VITE_GOOGLE_AI_API_KEY=your-actual-google-ai-studio-api-key
 VITE_GOOGLE_MAPS_API_KEY=your-actual-google-maps-api-key
 ```
 
@@ -41,8 +39,7 @@ For production deployment, you'll need to:
 
 For Global Rescue internal deployment, contact the development team for the actual API keys:
 
-- **OpenAI API Key**: Contact dev team for production key
-- **Assistant ID**: Contact dev team for production assistant ID
+- **Google AI Studio API Key**: Contact dev team for production key
 - **Google Maps API Key**: Contact dev team for production maps key
 
 ### Security Notes
